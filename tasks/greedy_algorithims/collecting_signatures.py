@@ -29,4 +29,4 @@ if __name__ == "__main__":
 
     res = collecting_signatures(segments=segments)
     print(len(res))
-    print(res)
+    print(" ".join(str(x) for x in res))
