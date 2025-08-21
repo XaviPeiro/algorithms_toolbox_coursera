@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 """
     I got this one in the first interview with goole that I failed.
@@ -10,7 +10,6 @@ from typing import Any, Optional
 class Solution:
     def __call__(self, compressed_str: str) -> str:
         r = self._process(compressed_str=compressed_str)[0]
-        groups = []
         return r
 
     def _process(self, compressed_str: str, pos: int = 0) -> tuple[str, int]:
@@ -69,6 +68,63 @@ class Solution:
         print(f"\n\n {res} \n\n")
         return res
 
+class Solution:
+    def __call__(self, compressed_str: str) -> str:
+        res = self._process(iter(compressed_str))
+        return res
+
+    def _process(self, itcs: Iterable) -> str:
+        """
+        return the built string
+        """
+        res: str = ""
+        
+        sub_res: str
+
+        is_mul: bool = False
+        mul: str = ""
+
+        groups: list[list[str|int]] = []
+        for c in itcs:
+            match c:
+                case "(":
+                    sub_res = self._process(itcs=itcs)
+                    groups.append([sub_res,1])
+                    continue
+                case ")":
+                    break
+                    continue
+                case "{":
+                    is_mul = True
+                    continue
+                case "}":
+                    mul = int(mul)
+                    groups[-1][1] = mul
+                    # reset
+                    is_mul = False
+                    mul = ""
+                    continue
+                case _:
+                    if is_mul:
+                        mul += c
+                        continue
+
+                    groups.append([c, 1])
+                    continue
+        
+        res = self._build(groups)
+        print(groups)
+        print(res)
+        return res
+    
+    def _build(self, groups: list[list[str|int]]) -> str:
+        res: str = ""
+        for g in groups:
+            res += g[0]*g[1]
+        return res
+            
+
+        
 if "__main__" == __name__:
     s = Solution()
     assert s("(a){3}") == "aaa"
